@@ -9,6 +9,7 @@ an add-on board for a Raspberry Pi+/2 with an 8 by 8 grid of ws281x
 LEDs.
 
 http://www.solderlab.de/index.php/software/glediator
+
 https://en.wikipedia.org/wiki/Art-Net
 
 ## Preliminary
@@ -66,16 +67,22 @@ Close and save the file.
 In Glediator change the matrix size to 8 by 8.
 
 At the Glediator main screen, select Options | Matrix Size
+
 Size_X = 8 Size_Y = 8
 
 ### Set Art-Net mode
 At the Glediator main screen, select Options | Output
 
 At the Output Options screen:
+
+```
 Output Mode: Artnet
 Mapping Mode: Single_Pixels
-Ignore the rest in the top half of the screen.
-Ignore the left bottom options which are the serial port
+```
+
+Ignore the rest in the top half of the screen. Ignore the left bottom options
+which are for serial ports.
+
 In the right bottom options click on Patch ArtNet/TMP2.Net
 
 At the "Artnet & TPM2.Net Patcher" screen, load artnet-pimoroni-unicorn-hat.gled
@@ -84,9 +91,8 @@ Click on Done
 
 Back at the Output Options screen, click on Apply Changes.
 
-Click on Open Socket. Glediator starts sending pixel values to the Pi.
+Click on "Open Socket". Glediator will start sending pixel values to the Pi.
 
 Click on Done to get back to the main screen.
 
-At this point, the control panel can be used to generate new patterns on
-the LEDs.
+At this point, the control panel can be used to generate new patterns.

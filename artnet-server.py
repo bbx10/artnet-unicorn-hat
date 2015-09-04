@@ -1,5 +1,5 @@
 # Art-Net protocol for Pimoroni Unicorn Hat
-#
+# License: MIT
 import unicornhat as unicorn
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
