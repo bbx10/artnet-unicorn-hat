@@ -96,3 +96,27 @@ Click on "Open Socket". Glediator will start sending pixel values to the Pi.
 Click on Done to get back to the main screen.
 
 At this point, the control panel can be used to generate new patterns.
+
+## PixelController
+
+PixelController is another LED pattern generator with Art-Net output. After
+unzipping pixelcontroller-distribution-2.1.0-RC1.zip change into the directory
+pixelcontroller-distribution-2.1.0-RC. Copy config.properties from this
+repo to the directory data.
+
+Edit data/config.properties to set the IP address of the Pi.
+
+```
+# Change the following line to match the IP of your Pi
+artnet.ip=192.168.1.231
+```
+
+Next run the program. The Unicorn Hat should immediately show pixel patterns.
+
+```
+unzip pixelcontroller-distribution-2.1.0-RC1.zip
+cd pixelcontroller-distribution-2.1.0-RC
+cp ~/artnet-unicorn-hat/config.properties data/
+nano data/config.properties
+java -jar PixelController.jar
+```
