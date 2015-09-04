@@ -99,6 +99,8 @@ At this point, the control panel can be used to generate new patterns.
 
 ## PixelController
 
+https://github.com/neophob/PixelController/releases
+
 PixelController is another LED pattern generator with Art-Net output. After
 unzipping pixelcontroller-distribution-2.1.0-RC1.zip change into the directory
 pixelcontroller-distribution-2.1.0-RC. Copy config.properties from this
