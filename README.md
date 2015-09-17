@@ -122,3 +122,33 @@ cp ~/artnet-unicorn-hat/config.properties data/
 nano data/config.properties
 java -jar PixelController.jar
 ```
+
+## Open Pixel Control Protocol
+
+Add support for Open Pixel Control protocol on TCP port 7890. See
+https://github.com/zestyping/openpixelcontrol for the OPC protocol
+specification.
+
+Do not use OPC and Art-Net at the same time. This will just produce
+garbage on the LEDs.
+
+### Example OPC programs to drive the LEDs
+
+Many open pixel control and Fade Candy examples work. Be sure to
+modify the examples with the Raspi IP address.
+
+The following examples from https://github.com/zestyping/openpixelcontrol work.
+
+    python_clients/
+            lava_lamp.py,miami.py,nyan_cat.py,sailor_moon.py,spatial_stripes.py
+
+            ```
+            $ ./lava\_lamp.py -l grid8x8.json -s <Raspi IP addr>:7890 -f 20
+            ```
+
+The Fadecandy grid8x8 Processing examples at https://github.com/scanlime/fadecandy work. These examples show how
+to create interactive LED displays. Edit the PDE file to add the Raspi IP address.
+
+    examples/processing/
+        grid8x8_dot, grid8x8_noise_sample, grid8x8_orbits, grid8x8_wavefronts
+
