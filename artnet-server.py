@@ -44,7 +44,7 @@ class ArtNet(DatagramProtocol):
 
 class OPC(protocol.Protocol):
     # Parse Open Pixel Control protocol. See http://openpixelcontrol.org/.
-    MAX_LEDS = 1024
+    MAX_LEDS = 64
     parseState = 0
     pktChannel = 0
     pktCommand = 0
@@ -54,16 +54,19 @@ class OPC(protocol.Protocol):
 
     def dataReceived(self, data):
         rawbytes = map(ord, data)
-        i = 0;
+        #print "len(rawbytes) %d" % len(rawbytes)
+        #print rawbytes
+        i = 0
         while (i < len(rawbytes)):
+            #print "parseState %d i %d" % (OPC.parseState, i)
             if (OPC.parseState == 0):   # get OPC.pktChannel
                 OPC.pktChannel = rawbytes[i]
                 i += 1
                 OPC.parseState += 1
             elif (OPC.parseState == 1): # get OPC.pktCommand
                 OPC.pktCommand = rawbytes[i]
-                i += 1;
-                OPC.parseState += 1;
+                i += 1
+                OPC.parseState += 1
             elif (OPC.parseState == 2): # get OPC.pktLength.highbyte
                 OPC.pktLength = rawbytes[i] << 8
                 i += 1
@@ -75,11 +78,12 @@ class OPC(protocol.Protocol):
                 OPC.pixelCount = 0
                 OPC.pixelLimit = min(3*OPC.MAX_LEDS, OPC.pktLength)
                 #print "OPC.pktChannel %d OPC.pktCommand %d OPC.pktLength %d OPC.pixelLimit %d" % \
-                #        (OPC.pktChannel, OPC.pktCommand, OPC.pktLength, OPC.pixelLimit)
+                #    (OPC.pktChannel, OPC.pktCommand, OPC.pktLength, OPC.pixelLimit)
                 if (OPC.pktLength > 3*OPC.MAX_LEDS):
                     print "Received pixel packet exeeds size of buffer! Data discarded."
+                if (OPC.pixelLimit == 0):
+                    OPC.parseState = 0
             elif (OPC.parseState == 4):
-                # DANGER TODO: Does not handle malformed packets
                 copyBytes = min(OPC.pixelLimit - OPC.pixelCount, len(rawbytes) - i)
                 if (copyBytes > 0):
                     OPC.pixelCount += copyBytes
@@ -88,7 +92,9 @@ class OPC(protocol.Protocol):
                     if ((OPC.pktCommand == 0) and (OPC.pktChannel <= 1)):
                         x = 0
                         y = 0
-                        while ((i < (i+copyBytes)) and (y < 8)):
+                        iLimit = i + copyBytes
+                        while ((i < iLimit) and (y < 8)):
+                            #print "i %d" % (i)
                             r = rawbytes[i]
                             i += 1
                             g = rawbytes[i]
@@ -96,15 +102,29 @@ class OPC(protocol.Protocol):
                             b = rawbytes[i]
                             i += 1
                             unicorn.set_pixel(x, y, r, g, b)
+                            #print "x %d y %d r %d g %d b %d" % (x,y,r,g,b)
                             x += 1
                             if (x > 7):
                                 x = 0
                                 y += 1
-                        unicorn.show()
+
+                        if (OPC.pixelCount >= OPC.pixelLimit):
+                            unicorn.show()
+                    else:
+                        i += copyBytes
+                    if (OPC.pixelCount == OPC.pktLength):
+                        OPC.parseState = 0
+                    else:
+                        OPC.parseState += 1
+            elif (OPC.parseState == 5):
+                discardBytes = min(OPC.pktLength - OPC.pixelLimit, len(rawbytes) - i)
+                #print "discardBytes %d" % (discardBytes)
+                OPC.pixelCount += discardBytes
+                i += discardBytes
+                if (OPC.pixelCount >= OPC.pktLength):
                     OPC.parseState = 0
-                    i += copyBytes
-                else:
-                    i += 1
+            else:
+                print "Invalid OPC.parseState %d" % (OPC.parseState)
 
 
 class OPCFactory(protocol.Factory):
